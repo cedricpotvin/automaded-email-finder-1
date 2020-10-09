@@ -132,13 +132,11 @@ function createEmailsList(domain, firstname, lastname){
 
 async function findInRowNumber(rows) {
   var i = 0;
-  console.log(rows[1].complete_name)
-
   for (var row in rows) {
     if (rows[i].trigger == 1){
-      console.log(rows[i].domain);
-      console.log(rows[i].name);
       email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
+      console.log("result");
+      console.log(i);
       console.log(email_list)
       if (email){
         rows[i].email =email_list;
