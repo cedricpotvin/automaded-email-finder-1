@@ -126,7 +126,6 @@ function createEmailsList(domain, firstname, lastname){
 
     q.drain = function() {
       console.log('Not found: ', JSON.stringify(domain, firstname, lastname));
-      reject();
     }
   });
 }
@@ -141,7 +140,12 @@ async function findInRowNumber(rows) {
       console.log(rows[i].name);
       email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
       console.log(email_list)
-      rows[i].email =email_list[0];
+      if (email){
+        rows[i].email =email_list;
+      }
+      else{
+        rows[i].email ="Not Found!";
+      }
       await rows[i].save();
     }
     // if ( rows[i].complete_name == data ) {
