@@ -38,7 +38,7 @@ app.get('/', function(req, res){
   });
 });
 
-app.get('/find', function(req, res) {
+app.post('/find', function(req, res) {
 
   // var data = {
   //   name: req.params.name,
