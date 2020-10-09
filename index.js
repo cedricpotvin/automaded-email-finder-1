@@ -82,8 +82,14 @@ async function updateGoogleSheet() {
 }
 
 function createEmailsList(domain, firstname, lastname){
+  console.log(firstname);
+  console.log(lastname);
+  firstname  = "" + firstname;
+  lastname = "" + lastname;
   var fi = firstname.charAt(0);
   var li = lastname.charAt(0);
+
+  console.log(fi);
 
   var output = template({
       li : li,
@@ -92,6 +98,8 @@ function createEmailsList(domain, firstname, lastname){
       ln : lastname,
       domain : domain
   });
+
+  console.log(output)
 
   var emailsArr = output.split('\n');
 
@@ -126,19 +134,17 @@ function createEmailsList(domain, firstname, lastname){
 
     q.drain = function() {
       console.log('Not found: ', JSON.stringify(domain, firstname, lastname));
+      reject();
     }
   });
 }
 
 async function findInRowNumber(rows) {
-  console.log("HERE")
   var i = 0;
   for (var row in rows) {
-    if (rows[i].trigger == 1){
-      try{
-        email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
+      if (rows[i].trigger == 1){
+        email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].lastname);
         console.log("result");
-        console.log(i);
         console.log(email_list)
         if (email_list){
           rows[i].email =email_list;
@@ -149,15 +155,13 @@ async function findInRowNumber(rows) {
         await rows[i].save();
 
       }
-      catch{
-        rows[i].email ="Not Found!";
-      }
-      
-    }
+     
+  
+    i++;
+
     // if ( rows[i].complete_name == data ) {
     //   return i;
     // }
-    i++;
   }
 
   return -1;
