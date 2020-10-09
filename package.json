@@ -23,13 +23,6 @@
     "google-spreadsheet": "^3.0.13",
     "express": "^4.14.0",
     "swig": "^1.4.2",
-    "@babel/core": "^7.11.6",
-    "@babel/node": "^7.10.5",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/node": "^7.10.5",
     "babel-plugin-transform-object-rest-spread": "^6.26.0"
   }
 }
