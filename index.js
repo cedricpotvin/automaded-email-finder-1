@@ -82,8 +82,8 @@ async function updateGoogleSheet() {
 }
 
 function createEmailsList(domain, firstname, lastname){
-  var fi = firstname;
-  var li = lastname;
+  var fi = firstname[0];
+  var li = lastname[0];
 
   var output = template({
       li : li,
