@@ -138,7 +138,7 @@ async function findInRowNumber(rows) {
       console.log("result");
       console.log(i);
       console.log(email_list)
-      if (email){
+      if (email_list){
         rows[i].email =email_list;
       }
       else{
