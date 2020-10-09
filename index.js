@@ -82,8 +82,8 @@ async function updateGoogleSheet() {
 }
 
 function createEmailsList(domain, firstname, lastname){
-  var fi = firstname[0];
-  var li = lastname[0];
+  var fi = firstname.charAt(0);
+  var li = lastname.charAt(0);
 
   var output = template({
       li : li,
@@ -131,6 +131,7 @@ function createEmailsList(domain, firstname, lastname){
 }
 
 async function findInRowNumber(rows) {
+  console.log("HERE")
   var i = 0;
   for (var row in rows) {
     if (rows[i].trigger == 1){
