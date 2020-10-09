@@ -94,8 +94,8 @@ function createEmailsList(domain, firstname, lastname){
   });
 
   var emailsArr = output.split('\n');
-  var email_valid;
-  new Promise(function(resolve, reject) {
+
+  return new Promise(function(resolve, reject) {
 
     var q = async.queue(function (email, callback) {
 
@@ -109,7 +109,6 @@ function createEmailsList(domain, firstname, lastname){
 
          if (res) {
            console.log("%s is a valid email address", email);
-            email_valid = email;
 
           // Kill the queue
           q.kill();
@@ -127,7 +126,6 @@ function createEmailsList(domain, firstname, lastname){
 
     q.drain = function() {
       console.log('Not found: ', JSON.stringify(domain, firstname, lastname));
-      email = "Not Found!!"
       reject();
     }
   });
@@ -141,7 +139,7 @@ async function findInRowNumber(rows) {
     if (rows[i].trigger == 1){
       console.log(rows[i].domain);
       console.log(rows[i].name);
-      email_list = createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
+      email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
       console.log(email_list)
       rows[i].email =email_list[0];
       await rows[i].save();
