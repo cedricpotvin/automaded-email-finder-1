@@ -40,18 +40,16 @@ app.get('/', function(req, res){
 
 app.get('/find', function(req, res) {
 
-  var data = {
-    name: req.params.name,
-    domain: req.params.domain
-  };
-  console.log(req);
+  // var data = {
+  //   name: req.params.name,
+  //   domain: req.params.domain
+  // };
   emailList = ["darlenys@gmail.com"]
   // emailList =  createEmailsList(program.domain, firstname, lastname);
   if (true){
     console.log("Reporting to Google Sheets")
-    updateGoogleSheet(data, emailList)
+    updateGoogleSheet()
   }
-  emailFinder(data)
 });
 
   // All set, start listening!
@@ -61,12 +59,7 @@ app.listen(app.get('port'), function() {
 
 });
 
-async function updateGoogleSheet(program, emailList) {
-  program = {
-    "name": "darle",
-    "last_name": "gomez"
-  }
-  data = "darlenys diaz resonance.nyc"
+async function updateGoogleSheet() {
   try {
     console.log("HERE");
     const doc = new googleSpreadsheet.GoogleSpreadsheet('1oMwHrtFJxhTBdEhix_JSOjytbNkMYvD6XCm_x3tw5cg');
@@ -78,11 +71,11 @@ async function updateGoogleSheet(program, emailList) {
     var sheet = doc.sheetsByIndex[0];
     var rows = await sheet.getRows();
     rowNumber = 0;
-    rowNumber += await findInRowNumber(data, rows);
-    console.log(rowNumber)
-    console.log(rows[rowNumber].name);
-    rows[rowNumber].email = 'sergey@abc.xyz';
-    await rows[rowNumber].save();
+    rowNumber += await findInRowNumber(rows);
+    // console.log(rowNumber)
+    // console.log(rows[rowNumber].name);
+    // rows[rowNumber].email = 'sergey@abc.xyz';
+    // await rows[rowNumber].save();
   }
   catch(e) {
     console.log('Catch an error: ', e);
@@ -90,8 +83,8 @@ async function updateGoogleSheet(program, emailList) {
 }
 
 function createEmailsList(domain, firstname, lastname){
-  var fi = firstname.charAt(0);
-  var li = lastname.charAt(0);
+  var fi = firstname;
+  var li = lastname;
 
   var output = template({
       li : li,
@@ -139,15 +132,22 @@ function createEmailsList(domain, firstname, lastname){
   });
 }
 
-function findInRowNumber(data, rows) {
+async function findInRowNumber(rows) {
   var i = 0;
   console.log(rows[1].complete_name)
 
   for (var row in rows) {
-    console.log(rows[i].complete_name)
-    if ( rows[i].complete_name == data ) {
-      return i;
+    if (rows[i].trigger == 1){
+      console.log(rows[i].domain);
+      console.log(rows[i].name);
+      email = createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
+      console.log(email)
+      rows[i].email =email;
+      await rows[i].save();
     }
+    // if ( rows[i].complete_name == data ) {
+    //   return i;
+    // }
     i++;
   }
 
