@@ -138,3 +138,19 @@ function createEmailsList(domain, firstname, lastname){
     }
   });
 }
+
+function findInRowNumber(data, rows) {
+  var i = 0;
+  console.log(rows[1].complete_name)
+
+  for (var row in rows) {
+    console.log(rows[i].complete_name)
+    if ( rows[i].complete_name == data ) {
+      return i;
+    }
+    i++;
+  }
+
+  return -1;
+
+}
