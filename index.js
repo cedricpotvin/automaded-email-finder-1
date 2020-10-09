@@ -2,8 +2,13 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 var debug = require('debug')('index');
+var swig  = require('swig');
+var async = require('async');
+var template = swig.compileFile(__dirname + '/lib/emails.txt');
+var emailExistence = require('email-existence');
+var googleSpreadsheet = require('google-spreadsheet');
 
-var emailFinder = require('./lib/email-finder');
+var emailFinder = require('./lib/email-finder')
 
 var app = express();
 
@@ -33,23 +38,103 @@ app.get('/', function(req, res){
   });
 });
 
-app.post('/find', function(req, res) {
+app.get('/find', function(req, res) {
 
   var data = {
-    name: req.body.first_name.trim() + ' ' + req.body.last_name.trim(),
-    domain: req.body.domain
+    name: req.params.name,
+    domain: req.params.domain
   };
-
+  console.log(req);
+  emailList = ["darlenys@gmail.com"]
+  // emailList =  createEmailsList(program.domain, firstname, lastname);
+  if (true){
+    console.log("Reporting to Google Sheets")
+    updateGoogleSheet(data, emailList)
+  }
   emailFinder(data)
-  .then(function (email) {
-    res.send({email: email});
-  })
-  .catch(function (err) {
-    res.status(500).send(err);
-  })
 });
 
   // All set, start listening!
 app.listen(app.get('port'), function() {
   console.log(`Server running at http://localhost:${app.get('port')}`);
+ 
+
 });
+
+async function updateGoogleSheet(program, emailList) {
+  program = {
+    "name": "darle",
+    "last_name": "gomez"
+  }
+  data = "darlenys diaz resonance.nyc"
+  try {
+    console.log("HERE");
+    const doc = new googleSpreadsheet.GoogleSpreadsheet('1oMwHrtFJxhTBdEhix_JSOjytbNkMYvD6XCm_x3tw5cg');
+
+    await doc.useServiceAccountAuth(require('./creds-from-google.json'));
+
+    await doc.loadInfo(); 
+    console.log(doc.title);
+    var sheet = doc.sheetsByIndex[0];
+    var rows = await sheet.getRows();
+    rowNumber = 0;
+    rowNumber += await findInRowNumber(data, rows);
+    console.log(rowNumber)
+    console.log(rows[rowNumber].name);
+    rows[rowNumber].email = 'sergey@abc.xyz';
+    await rows[rowNumber].save();
+  }
+  catch(e) {
+    console.log('Catch an error: ', e);
+  }
+}
+
+function createEmailsList(domain, firstname, lastname){
+  var fi = firstname.charAt(0);
+  var li = lastname.charAt(0);
+
+  var output = template({
+      li : li,
+      fi : fi,
+      fn : firstname,
+      ln : lastname,
+      domain : domain
+  });
+
+  var emailsArr = output.split('\n');
+
+  return new Promise(function(resolve, reject) {
+
+    var q = async.queue(function (email, callback) {
+
+      console.log('Testing %s...', email)
+
+       emailExistence.check(email, function(err, res) {
+
+        if (err) {
+          return callback();
+        }
+
+         if (res) {
+           console.log("%s is a valid email address", email);
+
+          // Kill the queue
+          q.kill();
+          return resolve(email);
+         }
+
+        callback();
+      });
+
+    }, 2);
+
+    emailsArr.forEach(function(email){
+      q.push(email, function (err) {});
+    });
+
+    q.drain = function() {
+      console.log('Not found: ', JSON.stringify(domain, firstname, lastname));
+      reject();
+    }
+  });
+}
