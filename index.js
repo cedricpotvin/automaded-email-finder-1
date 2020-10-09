@@ -44,7 +44,6 @@ app.post('/find', function(req, res) {
   //   name: req.params.name,
   //   domain: req.params.domain
   // };
-  emailList = ["darlenys@gmail.com"]
   // emailList =  createEmailsList(program.domain, firstname, lastname);
   if (true){
     console.log("Reporting to Google Sheets")
@@ -95,8 +94,8 @@ function createEmailsList(domain, firstname, lastname){
   });
 
   var emailsArr = output.split('\n');
-
-  return new Promise(function(resolve, reject) {
+  var email_valid;
+  new Promise(function(resolve, reject) {
 
     var q = async.queue(function (email, callback) {
 
@@ -110,6 +109,7 @@ function createEmailsList(domain, firstname, lastname){
 
          if (res) {
            console.log("%s is a valid email address", email);
+            email_valid = email;
 
           // Kill the queue
           q.kill();
@@ -127,9 +127,13 @@ function createEmailsList(domain, firstname, lastname){
 
     q.drain = function() {
       console.log('Not found: ', JSON.stringify(domain, firstname, lastname));
+      email = "Not Found!!"
       reject();
     }
   });
+  console.log(q)
+  console.log(email_valid)
+  return email_valid;
 }
 
 async function findInRowNumber(rows) {
