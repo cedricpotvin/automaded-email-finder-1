@@ -131,9 +131,6 @@ function createEmailsList(domain, firstname, lastname){
       reject();
     }
   });
-  console.log(q)
-  console.log(email_valid)
-  return email_valid;
 }
 
 async function findInRowNumber(rows) {
@@ -144,9 +141,9 @@ async function findInRowNumber(rows) {
     if (rows[i].trigger == 1){
       console.log(rows[i].domain);
       console.log(rows[i].name);
-      email = createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
-      console.log(email)
-      rows[i].email =email;
+      email_list = createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
+      console.log(email_list)
+      rows[i].email =email_list[0];
       await rows[i].save();
     }
     // if ( rows[i].complete_name == data ) {
