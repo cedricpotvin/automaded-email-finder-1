@@ -134,17 +134,24 @@ async function findInRowNumber(rows) {
   var i = 0;
   for (var row in rows) {
     if (rows[i].trigger == 1){
-      email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
-      console.log("result");
-      console.log(i);
-      console.log(email_list)
-      if (email_list){
-        rows[i].email =email_list;
+      try{
+        email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].last_name);
+        console.log("result");
+        console.log(i);
+        console.log(email_list)
+        if (email_list){
+          rows[i].email =email_list;
+        }
+        else{
+          rows[i].email ="Not Found!";
+        }
+        await rows[i].save();
+
       }
-      else{
+      catch{
         rows[i].email ="Not Found!";
       }
-      await rows[i].save();
+      
     }
     // if ( rows[i].complete_name == data ) {
     //   return i;
