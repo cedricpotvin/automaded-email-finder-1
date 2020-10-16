@@ -143,6 +143,7 @@ async function findInRowNumber(rows) {
   var i = 0;
   for (var row in rows) {
       if (rows[i].trigger == 1){
+        var domain = rows[i].domain.replace('http://','').replace('https://','').split(/[/?#]/)[0];
         email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].lastname);
         console.log("result");
         console.log(email_list)
