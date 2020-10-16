@@ -60,21 +60,15 @@ app.listen(app.get('port'), function() {
 
 async function updateGoogleSheet() {
   try {
-    console.log("HERE");
-    const doc = new googleSpreadsheet.GoogleSpreadsheet('1oMwHrtFJxhTBdEhix_JSOjytbNkMYvD6XCm_x3tw5cg');
+    const doc = new googleSpreadsheet.GoogleSpreadsheet(process.env.SPREADSHEET_ID);
 
     await doc.useServiceAccountAuth(require('./creds-from-google.json'));
 
     await doc.loadInfo(); 
-    console.log(doc.title);
     var sheet = doc.sheetsByIndex[0];
     var rows = await sheet.getRows();
     rowNumber = 0;
-    rowNumber += await findInRowNumber(rows);
-    // console.log(rowNumber)
-    // console.log(rows[rowNumber].name);
-    // rows[rowNumber].email = 'sergey@abc.xyz';
-    // await rows[rowNumber].save();
+    rowNumber += await update_data(rows);
   }
   catch(e) {
     console.log('Catch an error: ', e);
@@ -137,12 +131,11 @@ function createEmailsList(domain, firstname, lastname){
   });
 }
 
-async function findInRowNumber(rows) {
+async function update_data(rows) {
   var i = 0;
   for (var row in rows) {
       if (rows[i].name != "" && rows[i].lastname != "" && rows[i].domain !="" && rows[i].email == ""){
         var domain = rows[i].domain.replace('http://','').replace('https://','').split(/[/?#]/)[0];
-        console.log(domain)
         email_list = await createEmailsList(domain, rows[i].name, rows[i].lastname);
         console.log("result");
         console.log(email_list)
@@ -159,9 +152,6 @@ async function findInRowNumber(rows) {
   
     i++;
 
-    // if ( rows[i].complete_name == data ) {
-    //   return i;
-    // }
   }
 
   return -1;
