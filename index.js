@@ -107,8 +107,6 @@ function createEmailsList(domain, firstname, lastname){
 
     var q = async.queue(function (email, callback) {
 
-      console.log('Testing %s...', email)
-
        emailExistence.check(email, function(err, res) {
 
         if (err) {
@@ -134,7 +132,7 @@ function createEmailsList(domain, firstname, lastname){
 
     q.drain = function() {
       console.log('Not found: ', JSON.stringify(domain, firstname, lastname));
-      reject();
+      return resolve(null);
     }
   });
 }
