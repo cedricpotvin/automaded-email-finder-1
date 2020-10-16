@@ -142,9 +142,10 @@ function createEmailsList(domain, firstname, lastname){
 async function findInRowNumber(rows) {
   var i = 0;
   for (var row in rows) {
-      if (rows[i].trigger == 1){
+      if (rows[i].name != "" && rows[i].lastname != "" && rows[i].domain !="" && rows[i].email == ""){
         var domain = rows[i].domain.replace('http://','').replace('https://','').split(/[/?#]/)[0];
-        email_list = await createEmailsList(rows[i].domain, rows[i].name, rows[i].lastname);
+        console.log(domain)
+        email_list = await createEmailsList(domain, rows[i].name, rows[i].lastname);
         console.log("result");
         console.log(email_list)
         if (email_list){
