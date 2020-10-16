@@ -134,8 +134,8 @@ function createEmailsList(domain, firstname, lastname){
 async function update_data(rows) {
   var i = 0;
   for (var row in rows) {
-      if (rows[i].name != "" && rows[i].lastname != "" && rows[i].domain !="" && rows[i].email == ""){
-        var domain = rows[i].domain.replace('http://','').replace('https://','').split(/[/?#]/)[0];
+      if (rows[i].firstname != "" && rows[i].lastname != "" && rows[i].domain !="" && rows[i].email == ""){
+        var domain = rows[i].url.replace('http://','').replace('https://','').split(/[/?#]/)[0];
         email_list = await createEmailsList(domain, rows[i].name, rows[i].lastname);
         console.log("result");
         console.log(email_list)
