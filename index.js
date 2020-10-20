@@ -38,19 +38,13 @@ app.get('/', function(req, res){
   });
 });
 
-app.post('/find', function(req, res) {
+app.post('/find', async function(req, res) {
 
-  // var data = {
-  //   name: req.params.name,
-  //   domain: req.params.domain
-  // };
-  // emailList =  createEmailsList(program.domain, firstname, lastname);
-  if (true){
-    console.log("Reporting to Google Sheets")
-    updateGoogleSheet()
-  }
-  res.sendDate
-  process.exit(1)
+  console.log("Reporting to Google Sheets")
+  await updateGoogleSheet()
+  console.log("Done");
+  return res.send()
+
 });
 
   // All set, start listening!
@@ -71,7 +65,7 @@ async function updateGoogleSheet() {
     console.log(sheet.title);
     var rows = await sheet.getRows();
     await update_data(rows);
-    return "ok"
+    return "ok";
   }
   catch(e) {
     console.log('Catch an error: ', e);
@@ -93,6 +87,7 @@ function createEmailsList(domain, firstname, lastname){
       domain : domain
   });
 
+  console.log(output)
 
   var emailsArr = output.split('\n');
 
@@ -133,6 +128,7 @@ function createEmailsList(domain, firstname, lastname){
 async function update_data(rows) {
   var i = 0;
   for (var row in rows) {
+    console.log(rows[i]["First Name"])
       if (rows[i]["First Name"] && rows[i]["Last Name"] && rows[i].URL && !rows[i].Email){
         var domain = rows[i].URL.replace('http://','').replace('https://','').split(/[/?#]/)[0];
         email_list = await createEmailsList(domain, rows[i]["First Name"], rows[i]["Last Name"]);
