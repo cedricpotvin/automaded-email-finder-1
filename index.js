@@ -77,14 +77,11 @@ async function updateGoogleSheet() {
 }
 
 function createEmailsList(domain, firstname, lastname){
-  console.log(firstname);
-  console.log(lastname);
+ 
   firstname  = "" + firstname;
   lastname = "" + lastname;
   var fi = firstname.charAt(0);
   var li = lastname.charAt(0);
-
-  console.log(fi);
 
   var output = template({
       li : li,
@@ -138,11 +135,6 @@ async function update_data(rows) {
     console.log(rows[i]["First Name"])
 
       if (rows[i]["First Name"] && rows[i]["Last Name"] && rows[i].URL && !rows[i].Email){
-        console.log(rows[i]["First Name"])
-        console.log(rows[i]["Last Name"])
-        console.log(rows[i].Email)
-        console.log(rows[i].URL)
-    
         var domain = rows[i].URL.replace('http://','').replace('https://','').split(/[/?#]/)[0];
         email_list = await createEmailsList(domain, rows[i]["First Name"], rows[i]["Last Name"]);
         console.log("result");
