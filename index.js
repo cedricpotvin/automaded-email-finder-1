@@ -49,6 +49,7 @@ app.post('/find', function(req, res) {
     console.log("Reporting to Google Sheets")
     updateGoogleSheet()
   }
+  res.sendDate
 });
 
   // All set, start listening!
@@ -60,15 +61,15 @@ app.listen(app.get('port'), function() {
 
 async function updateGoogleSheet() {
   try {
-    const doc = new googleSpreadsheet.GoogleSpreadsheet(process.env.SPREADSHEET_ID);
+    const doc = new googleSpreadsheet.GoogleSpreadsheet('1RkfPLcTzsXPAjaWPYPuAIN2soVGy6QQmZnwoEgxyP-E');
 
     await doc.useServiceAccountAuth(require('./creds-from-google.json'));
 
     await doc.loadInfo(); 
     var sheet = doc.sheetsByIndex[0];
+    console.log(sheet.title);
     var rows = await sheet.getRows();
-    rowNumber = 0;
-    rowNumber += await update_data(rows);
+    await update_data(rows);
   }
   catch(e) {
     console.log('Catch an error: ', e);
@@ -134,16 +135,23 @@ function createEmailsList(domain, firstname, lastname){
 async function update_data(rows) {
   var i = 0;
   for (var row in rows) {
-      if (rows[i].firstname != "" && rows[i].lastname != "" && rows[i].domain !="" && rows[i].email == ""){
-        var domain = rows[i].url.replace('http://','').replace('https://','').split(/[/?#]/)[0];
-        email_list = await createEmailsList(domain, rows[i].name, rows[i].lastname);
+    console.log(rows[i]["First Name"])
+
+      if (rows[i]["First Name"] && rows[i]["Last Name"] && rows[i].URL && !rows[i].Email){
+        console.log(rows[i]["First Name"])
+        console.log(rows[i]["Last Name"])
+        console.log(rows[i].Email)
+        console.log(rows[i].URL)
+    
+        var domain = rows[i].URL.replace('http://','').replace('https://','').split(/[/?#]/)[0];
+        email_list = await createEmailsList(domain, rows[i]["First Name"], rows[i]["Last Name"]);
         console.log("result");
         console.log(email_list)
         if (email_list){
-          rows[i].email =email_list;
+          rows[i].Email =email_list;
         }
         else{
-          rows[i].email ="Not Found!";
+          rows[i].Email ="Not Found!";
         }
         await rows[i].save();
 
